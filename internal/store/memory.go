@@ -24,7 +24,11 @@ type SearchRow struct {
 func (s *Store) Insert(m model.Memory, embedding []float32, embedID string) (int64, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	return s.insertLocked(m, embedding, embedID)
+}
 
+// insertLocked is the body of Insert; the caller must already hold s.mu.
+func (s *Store) insertLocked(m model.Memory, embedding []float32, embedID string) (int64, error) {
 	stmt, _, err := s.conn.Prepare(`
 		INSERT INTO memories
 			(project, kind, title, content, tags, files, source, session, meta,
@@ -119,6 +123,11 @@ func (s *Store) Update(m model.Memory, embedding []float32, embedID string) erro
 func (s *Store) ExistsSimilar(project string, kind model.Kind, content string) (bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	return s.existsSimilarLocked(project, kind, content)
+}
+
+// existsSimilarLocked is the body of ExistsSimilar; the caller must hold s.mu.
+func (s *Store) existsSimilarLocked(project string, kind model.Kind, content string) (bool, error) {
 	stmt, _, err := s.conn.Prepare(
 		`SELECT 1 FROM memories WHERE project = ? AND kind = ? AND content = ? LIMIT 1`)
 	if err != nil {

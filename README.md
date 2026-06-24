@@ -1,5 +1,9 @@
 # gnar
 
+[![CI](https://github.com/asraygopa/gnar/actions/workflows/ci.yml/badge.svg)](https://github.com/asraygopa/gnar/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/asraygopa/gnar.svg)](https://pkg.go.dev/github.com/asraygopa/gnar)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Shared memory for switching IDEs, agents, and context windows.**
 
 Your coding session's state lives in three fragile places: the agent's context
@@ -219,3 +223,24 @@ on import, so it's portable across embedding providers):
 gnar export -o memories.jsonl     # back up everything
 gnar import memories.jsonl         # restore / merge — re-importing is idempotent
 ```
+
+Import is **atomic** (all-or-nothing): a malformed record aborts the whole import
+and leaves the store untouched.
+
+## Contributing
+
+Issues and PRs welcome. The codebase is small and layered
+(`model → config/embed/store → engine → mcpserver/cli`); both front-ends are thin
+shells over one engine. Before sending a PR:
+
+```bash
+make fmt          # gofmt
+make vet          # go vet
+make race         # tests with the race detector
+```
+
+CI runs the same checks plus a build and smoke test on every push.
+
+## License
+
+[MIT](LICENSE) © Asray Gopa

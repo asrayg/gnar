@@ -65,10 +65,12 @@ func cmdImport(args []string) error {
 		r = f
 	}
 	res, err := eng.Import(context.Background(), r)
-	// Always report progress, even on a mid-stream error (import is not atomic;
-	// re-running is safe because duplicates are skipped).
+	if err != nil {
+		// Import is atomic — on error nothing was written.
+		return err
+	}
 	fmt.Printf("imported %d, skipped %d (duplicates)\n", res.Added, res.Skipped)
-	return err
+	return nil
 }
 
 func cmdEdit(args []string) error {

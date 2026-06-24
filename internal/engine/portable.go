@@ -77,52 +77,46 @@ type ImportResult struct {
 // importing the same file twice is idempotent and a soft-deleted memory is not
 // resurrected as a duplicate.
 //
-// Import is not transactional: if it returns an error mid-stream, records already
-// inserted remain (re-running is safe thanks to the dedup above). The returned
-// ImportResult is always populated with progress so far, even on error. The
-// context is honored — cancellation aborts cleanly.
+// Import is atomic and all-or-nothing: it parses and embeds every record first
+// (honoring context cancellation), then commits the inserts in a single
+// transaction. If anything fails — a malformed record, a cancelled context, a DB
+// error — nothing is written and the returned ImportResult is zero. Embedding is
+// done before the transaction opens, so the store lock is never held during
+// network calls.
 func (e *Engine) Import(ctx context.Context, r io.Reader) (ImportResult, error) {
-	var res ImportResult
+	// Phase 1: decode + validate the whole stream (no DB writes).
 	dec := json.NewDecoder(r) // no fixed token cap; tolerates blank lines
+	var mems []model.Memory
 	for {
 		if err := ctx.Err(); err != nil {
-			return res, err
+			return ImportResult{}, err
 		}
 		var rec ExportRecord
 		if err := dec.Decode(&rec); err != nil {
 			if errors.Is(err, io.EOF) {
 				break
 			}
-			return res, fmt.Errorf("record %d: %w", res.Added+res.Skipped+1, err)
+			return ImportResult{}, fmt.Errorf("record %d: %w", len(mems)+1, err)
 		}
 		if rec.Project == "" || rec.Content == "" {
-			return res, fmt.Errorf("record %d: missing project or content", res.Added+res.Skipped+1)
+			return ImportResult{}, fmt.Errorf("record %d: missing project or content", len(mems)+1)
 		}
 		kind := rec.Kind
 		if kind == "" {
 			kind = model.KindNote
 		}
 		if !model.ValidKind(kind) {
-			return res, fmt.Errorf("record %d: invalid kind %q", res.Added+res.Skipped+1, kind)
+			return ImportResult{}, fmt.Errorf("record %d: invalid kind %q", len(mems)+1, kind)
 		}
-		exists, err := e.store.ExistsSimilar(rec.Project, kind, rec.Content)
-		if err != nil {
-			return res, err
-		}
-		if exists {
-			res.Skipped++
-			continue
-		}
-		now := e.now()
 		created := rec.CreatedAt
 		if created.IsZero() {
-			created = now
+			created = e.now()
 		}
 		updated := rec.UpdatedAt
 		if updated.IsZero() {
 			updated = created
 		}
-		m := model.Memory{
+		mems = append(mems, model.Memory{
 			Project:   rec.Project,
 			Kind:      kind,
 			Title:     rec.Title,
@@ -135,12 +129,64 @@ func (e *Engine) Import(ctx context.Context, r io.Reader) (ImportResult, error) 
 			Pinned:    rec.Pinned,
 			CreatedAt: created,
 			UpdatedAt: updated,
+		})
+	}
+
+	// Phase 2: embed every record up front (outside the DB lock). Best-effort —
+	// on provider failure we fall back to keyword-only (nil vectors).
+	vecs, embIDs := e.embedAll(ctx, mems)
+
+	// Phase 3: insert everything atomically. On any error the tx rolls back and
+	// the store is unchanged, so res is meaningful only on success.
+	var res ImportResult
+	err := e.store.RunInTx(func(tx *store.Tx) error {
+		for i, m := range mems {
+			exists, err := tx.ExistsSimilar(m.Project, m.Kind, m.Content)
+			if err != nil {
+				return err
+			}
+			if exists {
+				res.Skipped++
+				continue
+			}
+			if _, err := tx.Insert(m, vecs[i], embIDs[i]); err != nil {
+				return fmt.Errorf("record %d: %w", i+1, err)
+			}
+			res.Added++
 		}
-		vec, embID := e.tryEmbed(ctx, embedText(m.Title, m.Content))
-		if _, err := e.store.Insert(m, vec, embID); err != nil {
-			return res, fmt.Errorf("record %d: %w", res.Added+res.Skipped+1, err)
-		}
-		res.Added++
+		return nil
+	})
+	if err != nil {
+		return ImportResult{}, err
 	}
 	return res, nil
+}
+
+// embedAll embeds the text of each memory, returning per-record vectors and
+// embedder ids. It batches to bound request size and degrades to keyword-only
+// (nil vector, empty id) when the embedder fails.
+func (e *Engine) embedAll(ctx context.Context, mems []model.Memory) ([][]float32, []string) {
+	vecs := make([][]float32, len(mems))
+	embIDs := make([]string, len(mems))
+	const batch = 128
+	for start := 0; start < len(mems); start += batch {
+		end := start + batch
+		if end > len(mems) {
+			end = len(mems)
+		}
+		texts := make([]string, 0, end-start)
+		for _, m := range mems[start:end] {
+			texts = append(texts, embedText(m.Title, m.Content))
+		}
+		got, err := e.emb.Embed(ctx, texts)
+		if err != nil || len(got) != len(texts) {
+			continue // leave this batch keyword-only
+		}
+		id := e.emb.ID()
+		for j := range got {
+			vecs[start+j] = got[j]
+			embIDs[start+j] = id
+		}
+	}
+	return vecs, embIDs
 }

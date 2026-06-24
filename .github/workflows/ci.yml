@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Verify formatting
+        run: |
+          gofmt -l . | tee /tmp/fmt.out
+          test ! -s /tmp/fmt.out
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test (race + cover)
+        run: go test -race -cover ./...
+
+      - name: Build
+        run: CGO_ENABLED=0 go build -o gnar .
+
+      - name: Smoke test
+        run: |
+          export GNAR_HOME="$(mktemp -d)"
+          ./gnar remember -k fact "ci smoke test memory" --tag ci
+          ./gnar recall smoke | grep -q "ci smoke test"
+          ./gnar status | grep -q "memories: 1"

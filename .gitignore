@@ -1,0 +1,13 @@
+# built binary
+/gnar
+/dist/
+
+# local gnar home / databases
+*.db
+*.db-wal
+*.db-shm
+.gnar/
+
+# editor/OS
+.DS_Store
+*.swp

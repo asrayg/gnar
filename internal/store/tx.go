@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 // Tx is a write transaction scope. Its methods run against the same connection

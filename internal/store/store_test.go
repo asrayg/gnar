@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 func newTestStore(t *testing.T) *Store {

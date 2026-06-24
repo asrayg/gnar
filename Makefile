@@ -1,6 +1,6 @@
 BIN := gnar
 PREFIX ?= /usr/local
-PKG := github.com/asraygopa/gnar/internal
+PKG := github.com/asrayg/gnar/internal
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w \
 	-X $(PKG)/cli.Version=$(VERSION) \

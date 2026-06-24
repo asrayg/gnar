@@ -4,7 +4,7 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 // Stats returns a summary of the store and embedder health.

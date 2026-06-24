@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 // Counts returns the total memory count and a per-kind breakdown (excluding archived).

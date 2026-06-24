@@ -1,4 +1,4 @@
-module github.com/asraygopa/gnar
+module github.com/asrayg/gnar
 
 go 1.26.4
 

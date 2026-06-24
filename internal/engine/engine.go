@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asraygopa/gnar/internal/config"
-	"github.com/asraygopa/gnar/internal/embed"
-	"github.com/asraygopa/gnar/internal/model"
-	"github.com/asraygopa/gnar/internal/store"
+	"github.com/asrayg/gnar/internal/config"
+	"github.com/asrayg/gnar/internal/embed"
+	"github.com/asrayg/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/store"
 )
 
 // Engine is the high-level Gnar service.

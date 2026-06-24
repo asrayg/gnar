@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/asraygopa/gnar/internal/engine"
+	"github.com/asrayg/gnar/internal/engine"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

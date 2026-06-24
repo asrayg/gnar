@@ -9,8 +9,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/asraygopa/gnar/internal/model"
-	"github.com/asraygopa/gnar/internal/store"
+	"github.com/asrayg/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/store"
 )
 
 // ExportRecord is the portable, embedder-independent form of a memory. Embeddings

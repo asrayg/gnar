@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/asraygopa/gnar/internal/config"
-	"github.com/asraygopa/gnar/internal/embed"
-	"github.com/asraygopa/gnar/internal/engine"
-	"github.com/asraygopa/gnar/internal/store"
+	"github.com/asrayg/gnar/internal/config"
+	"github.com/asrayg/gnar/internal/embed"
+	"github.com/asrayg/gnar/internal/engine"
+	"github.com/asrayg/gnar/internal/store"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 // renderHandoff renders the markdown body stored as a handoff memory's content.

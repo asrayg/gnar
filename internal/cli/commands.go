@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/asraygopa/gnar/internal/engine"
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/engine"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 func cmdRemember(args []string) error {

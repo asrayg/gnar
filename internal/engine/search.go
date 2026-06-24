@@ -5,9 +5,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/asraygopa/gnar/internal/embed"
-	"github.com/asraygopa/gnar/internal/model"
-	"github.com/asraygopa/gnar/internal/store"
+	"github.com/asrayg/gnar/internal/embed"
+	"github.com/asrayg/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/store"
 )
 
 // RecallInput describes a recall query.

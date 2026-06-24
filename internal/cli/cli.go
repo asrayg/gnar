@@ -9,13 +9,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/asraygopa/gnar/internal/config"
-	"github.com/asraygopa/gnar/internal/engine"
+	"github.com/asrayg/gnar/internal/config"
+	"github.com/asrayg/gnar/internal/engine"
 )
 
 // Version is the CLI/build version. Overridable at build time via:
 //
-//	-ldflags "-X github.com/asraygopa/gnar/internal/cli.Version=v1.2.3"
+//	-ldflags "-X github.com/asrayg/gnar/internal/cli.Version=v1.2.3"
 var Version = "0.1.0"
 
 // Run dispatches a subcommand and returns a process exit code.

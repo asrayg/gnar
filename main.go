@@ -8,7 +8,7 @@ package main
 import (
 	"os"
 
-	"github.com/asraygopa/gnar/internal/cli"
+	"github.com/asrayg/gnar/internal/cli"
 )
 
 func main() {

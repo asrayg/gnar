@@ -9,9 +9,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/asraygopa/gnar/internal/config"
-	"github.com/asraygopa/gnar/internal/mcpserver"
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/config"
+	"github.com/asrayg/gnar/internal/mcpserver"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 func cmdServe(args []string) error {

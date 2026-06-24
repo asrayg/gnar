@@ -1,7 +1,7 @@
 # gnar
 
-[![CI](https://github.com/asraygopa/gnar/actions/workflows/ci.yml/badge.svg)](https://github.com/asraygopa/gnar/actions/workflows/ci.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/asraygopa/gnar.svg)](https://pkg.go.dev/github.com/asraygopa/gnar)
+[![CI](https://github.com/asrayg/gnar/actions/workflows/ci.yml/badge.svg)](https://github.com/asrayg/gnar/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/asrayg/gnar.svg)](https://pkg.go.dev/github.com/asrayg/gnar)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Shared memory for switching IDEs, agents, and context windows.**

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 )
 
 func TestExportImportRoundtrip(t *testing.T) {

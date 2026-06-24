@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asraygopa/gnar/internal/model"
+	"github.com/asrayg/gnar/internal/model"
 	"github.com/ncruces/go-sqlite3"
 )
 
